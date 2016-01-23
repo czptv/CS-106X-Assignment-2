@@ -8,9 +8,12 @@
 
 #include <iostream>
 #include <fstream>
+#include <cctype>
 using namespace std;
 
 #include "console.h"
+#include "map.h"
+#include "lexicon.h"
 #include "simpio.h"   // for getLine
 #include "strlib.h"   // for toLowerCase, trim
 
@@ -37,12 +40,39 @@ static string getFileName() {
     }
 }
 
+/*
+ * Read in the file and compile the information into a Map.
+ */
+
+static void readFile(Map<string, Lexicon> & grammar, string filename) {
+    ifstream infile;
+    infile.open(filename.c_str());
+    string currentLine;
+    string signalLine = " ";
+    string key;
+    while (getline(infile, currentLine)) {
+        if (isSpace(signalLine)) {
+            key = currentLine;
+            signalLine = currentLine;
+            Lexicon entries;
+            grammar.put(currentLine, entries);
+        } else if (isDigit(signalLine)) {
+            grammar[key].add(currentLine);
+        } else if (isSpace(currentLine) || isDigit(currentLine)) {
+            signalLine = currentLine;
+        }
+    }
+    infile.close();
+}
+
 int main() {
     while (true) {
         string filename = getFileName();
         if (filename.empty()) break;
-        cout << "Here's where you read in the \"" << filename << "\" grammar "
-             << "and generate three random sentences." << endl;
+        Map<string, Lexicon> grammar;
+        readFile(grammar, filename);
+        generateSentence(grammar);
+        grammar.clear();
     }
     
     cout << "Thanks for playing!" << endl;

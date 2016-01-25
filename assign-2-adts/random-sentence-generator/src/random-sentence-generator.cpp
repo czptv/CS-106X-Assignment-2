@@ -13,7 +13,7 @@ using namespace std;
 
 #include "console.h"
 #include "map.h"
-#include "lexicon.h"
+#include "vector.h"
 #include "simpio.h"   // for getLine
 #include "strlib.h"   // for toLowerCase, trim
 
@@ -41,35 +41,80 @@ static string getFileName() {
 }
 
 /*
+ * Detect whether the string passed in is a series of digit.
+ */
+
+static bool isDigit(string & str) {
+    for (int i = 0; i < str.size(); i++) {
+        if (!isdigit(str[i])) return false;
+    }
+    return true;
+}
+
+/*
+ * Check whether certain string is space.
+ */
+
+static bool isSpace(string & str) {
+    for (int i = 0; i < str.size(); i++) {
+        if (!isspace(str[i])) return false;
+    }
+    return true;
+}
+
+/*
  * Read in the file and compile the information into a Map.
  */
 
-static void readFile(Map<string, Lexicon> & grammar, string filename) {
+static void readFile(Map<string, Vector<string>> & grammar, string filename) {
     ifstream infile;
     infile.open(filename.c_str());
     string currentLine;
     string signalLine = " ";
     string key;
-    while (getline(infile, currentLine)) {
-        if (isSpace(signalLine)) {
+    char ch;
+    while (infile.get(ch)) {
+        cout << ch << " ";
+        /*if (isSpace(currentLine) || isDigit(currentLine)) {
+            signalLine = currentLine;
+        } else if (isSpace(signalLine)) {
             key = currentLine;
             signalLine = currentLine;
-            Lexicon entries;
+            Vector<string> entries;
             grammar.put(currentLine, entries);
         } else if (isDigit(signalLine)) {
             grammar[key].add(currentLine);
-        } else if (isSpace(currentLine) || isDigit(currentLine)) {
-            signalLine = currentLine;
         }
+        cout << grammar.toString() << endl;*/
     }
     infile.close();
+}
+
+/*
+ * Generate three random sentences
+ */
+
+static void generateSentence(const Map<string, Vector<string>> & grammar) {
+    string original;
+    for (int i = 0; i < 3; i++) {
+        original = grammar["<start>"][0];
+        int k = 0;
+        while (original.find('<', k) != string::npos) {
+            k = original.find('<', k)+1;
+            int keyEnd = original.find('>', k);
+            string key = original.substr(k, keyEnd - k + 1);
+            Vector<string> production= grammar[key];
+            original.replace(k, keyEnd - k + 1, production[randomInteger(0, production.size() -1)]);
+        }
+        cout << i + 1 << ".)" << original << endl << endl;
+    }
 }
 
 int main() {
     while (true) {
         string filename = getFileName();
         if (filename.empty()) break;
-        Map<string, Lexicon> grammar;
+        Map<string, Vector<string>> grammar;
         readFile(grammar, filename);
         generateSentence(grammar);
         grammar.clear();

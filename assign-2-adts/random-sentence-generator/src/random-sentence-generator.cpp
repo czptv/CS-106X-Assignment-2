@@ -72,10 +72,8 @@ static void readFile(Map<string, Vector<string>> & grammar, string filename) {
     string currentLine;
     string signalLine = " ";
     string key;
-    char ch;
-    while (infile.get(ch)) {
-        cout << ch << " ";
-        /*if (isSpace(currentLine) || isDigit(currentLine)) {
+    while (getline(infile, currentLine)) {
+        if (isSpace(currentLine) || isDigit(currentLine)) {
             signalLine = currentLine;
         } else if (isSpace(signalLine)) {
             key = currentLine;
@@ -85,8 +83,8 @@ static void readFile(Map<string, Vector<string>> & grammar, string filename) {
         } else if (isDigit(signalLine)) {
             grammar[key].add(currentLine);
         }
-        cout << grammar.toString() << endl;*/
     }
+    cout << grammar.toString() << endl;
     infile.close();
 }
 
@@ -115,9 +113,9 @@ int main() {
         string filename = getFileName();
         if (filename.empty()) break;
         Map<string, Vector<string>> grammar;
-        readFile(grammar, filename);
-        generateSentence(grammar);
-        grammar.clear();
+        readFile(grammar, getNormalizedFilename(filename));
+        //generateSentence(grammar);
+        //grammar.clear();
     }
     
     cout << "Thanks for playing!" << endl;

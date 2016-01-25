@@ -92,16 +92,17 @@ static void readFile(Map<string, Vector<string>> & grammar, string filename) {
  */
 
 static void generateSentence(const Map<string, Vector<string>> & grammar) {
+    cout << endl;
     string original;
     for (int i = 0; i < 3; i++) {
         original = grammar["<start>"][0];
         int k = 0;
         while (original.find('<', k) != string::npos) {
-            k = original.find('<', k) + 1;
+            k = original.find('<', k);
             int keyEnd = original.find('>', k);
-            string key = original.substr(k - 1, keyEnd - k + 2);
+            string key = original.substr(k, keyEnd - k + 1);
             Vector<string> production = grammar[key];
-            original.replace(k - 1, keyEnd - k + 2, production[randomInteger(0, production.size() -1)]);
+            original.replace(k, keyEnd - k + 1, production[randomInteger(0, production.size() -1)]);
         }
         cout << i + 1 << ".)" << original << endl << endl;
     }

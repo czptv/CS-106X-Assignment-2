@@ -84,7 +84,6 @@ static void readFile(Map<string, Vector<string>> & grammar, string filename) {
             grammar[key].add(currentLine);
         }
     }
-    cout << grammar.toString() << endl;
     infile.close();
 }
 
@@ -98,11 +97,11 @@ static void generateSentence(const Map<string, Vector<string>> & grammar) {
         original = grammar["<start>"][0];
         int k = 0;
         while (original.find('<', k) != string::npos) {
-            k = original.find('<', k)+1;
+            k = original.find('<', k) + 1;
             int keyEnd = original.find('>', k);
-            string key = original.substr(k, keyEnd - k + 1);
-            Vector<string> production= grammar[key];
-            original.replace(k, keyEnd - k + 1, production[randomInteger(0, production.size() -1)]);
+            string key = original.substr(k - 1, keyEnd - k + 2);
+            Vector<string> production = grammar[key];
+            original.replace(k - 1, keyEnd - k + 2, production[randomInteger(0, production.size() -1)]);
         }
         cout << i + 1 << ".)" << original << endl << endl;
     }
@@ -114,8 +113,8 @@ int main() {
         if (filename.empty()) break;
         Map<string, Vector<string>> grammar;
         readFile(grammar, getNormalizedFilename(filename));
-        //generateSentence(grammar);
-        //grammar.clear();
+        generateSentence(grammar);
+        grammar.clear();
     }
     
     cout << "Thanks for playing!" << endl;

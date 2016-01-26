@@ -92,32 +92,19 @@ static bool checkChamber (Vector<Set<cell>> & chambers, Vector<wall> & walls, in
  */
 
 static void completeMaze (Vector<Set<cell>> & chambers, Vector<wall> & walls, MazeGeneratorView & maze) {
-    Vector<bool> isChecked (walls.size(), false);
-    while (chambers.size() > 1) { //as long as there is one chamber
+    int a = 0;
+    while (chambers.size() > 1) {
         int n = randomInteger(0, walls.size() - 1);
-        if(!isChecked[n]) {
-            isChecked[n] = true;
-            int wallOne;
-            int wallTwo;
-            if (!checkChamber(chambers, walls, n, wallOne, wallTwo)) { //in different chamber
-                maze.removeWall(walls[n]);
-                Set<cell> chamber = chambers[wallOne] + chambers[wallTwo];
-                if (wallTwo > wallOne) {
-                    cout << "A1) " << wallOne << " " << wallTwo << " " << chambers.size() << endl;
-                    chambers.remove(wallTwo);
-                    cout << "A2) " << wallOne << " " << wallTwo << " " << chambers.size() << endl;
-                    chambers.remove(wallOne);
-                    cout << "A3) " << wallOne << " " << wallTwo << " " << chambers.size() << endl;
-                } else {
-                    cout << "B1) " << wallOne << " " << wallTwo << " " << chambers.size() << endl;
-                    chambers.remove(wallOne);
-                    cout << "B2) " << wallOne << " " << wallTwo << " " << chambers.size() << endl;
-                    chambers.remove(wallTwo);
-                    cout << "B3) " << wallOne << " " << wallTwo << " " << chambers.size() << endl;
-                }
-                chambers.add(chamber);
-            }
+        int wallOne;
+        int wallTwo;
+        if (!checkChamber(chambers, walls, n, wallOne, wallTwo)) { //in different chamber
+            a++;
+            maze.removeWall(walls[n]);
+            walls.remove(n);
+            chambers[wallOne] += chambers[wallTwo];
+            chambers.remove(wallTwo);
         }
+        cout << a << "     " << chambers.size() << endl;
     }
 }
 

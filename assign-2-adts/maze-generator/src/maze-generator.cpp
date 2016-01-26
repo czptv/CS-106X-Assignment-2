@@ -56,6 +56,7 @@ static void generateWall(int dimension, int i, int j, cell & c, Vector<wall> & w
  */
 
 static void generateChambers(int dimension, Vector<Set<cell>> & chambers, Vector<wall> & walls, MazeGeneratorView & maze) {
+    cout << "Biulding initial chambers..." << endl;
     for (int i = 0; i < dimension; i++) {
         for (int j = 0; j < dimension; j++) {
             cell c;
@@ -75,7 +76,7 @@ static void generateChambers(int dimension, Vector<Set<cell>> & chambers, Vector
  */
 
 static bool checkChamber (Vector<Set<cell>> & chambers, Vector<wall> & walls, int n, int & wallOne, int & wallTwo) {
-    for (int i = 0; i < chambers.size() - 1; i++) {
+    for (int i = 0; i < chambers.size(); i++) {
         if(chambers[i].contains(walls[n].one)) {
             wallOne = i;
         }
@@ -92,19 +93,17 @@ static bool checkChamber (Vector<Set<cell>> & chambers, Vector<wall> & walls, in
  */
 
 static void completeMaze (Vector<Set<cell>> & chambers, Vector<wall> & walls, MazeGeneratorView & maze) {
-    int a = 0;
+    cout << "Safely merging chambers, being careful to never introduce loops..." << endl;
     while (chambers.size() > 1) {
         int n = randomInteger(0, walls.size() - 1);
         int wallOne;
         int wallTwo;
         if (!checkChamber(chambers, walls, n, wallOne, wallTwo)) { //in different chamber
-            a++;
             maze.removeWall(walls[n]);
             walls.remove(n);
             chambers[wallOne] += chambers[wallTwo];
             chambers.remove(wallTwo);
         }
-        cout << a << "     " << chambers.size() << endl;
     }
 }
 
